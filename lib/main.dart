@@ -144,7 +144,12 @@ class HomePage extends StatelessWidget {
                 title: Text('Jurnal Emosi Harian'),
                 subtitle: Text('Catat suasana hatimu setiap hari.'),
                 onTap: () {
-                  // Navigate to journal page
+                  // Navigate to the Journal page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => JournalEmotionPage()),
+                  );
                 },
               ),
             ),
@@ -166,7 +171,107 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Profil Page dengan Foto, Nama Pengguna, Email, dan Pengaturan
+// Journal Emotion Page
+class JournalEmotionPage extends StatefulWidget {
+  @override
+  _JournalEmotionPageState createState() => _JournalEmotionPageState();
+}
+
+class _JournalEmotionPageState extends State<JournalEmotionPage> {
+  String? _selectedEmotion;
+  final TextEditingController _noteController = TextEditingController();
+
+  final List<String> _emotions = [
+    'Bahagia',
+    'Sedih',
+    'Cemas',
+    'Marah',
+    'Tenang',
+    'Bersemangat',
+  ];
+
+  void _saveJournalEntry() {
+    String emotion = _selectedEmotion ?? 'Tidak dipilih';
+    String note = _noteController.text.isNotEmpty
+        ? _noteController.text
+        : 'Tidak ada catatan';
+
+    // Simpan data jurnal di sini, bisa dengan menyimpan ke database lokal atau remote
+    print('Suasana hati: $emotion');
+    print('Catatan: $note');
+
+    // Setelah menyimpan, tampilkan pesan berhasil
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Jurnal emosi berhasil disimpan')),
+    );
+
+    // Bersihkan input
+    _noteController.clear();
+    setState(() {
+      _selectedEmotion = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jurnal Emosi Harian'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Bagaimana suasana hati Anda hari ini?',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: _selectedEmotion,
+              hint: const Text('Pilih suasana hati'),
+              items: _emotions.map((String emotion) {
+                return DropdownMenuItem<String>(
+                  value: emotion,
+                  child: Text(emotion),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedEmotion = newValue;
+                });
+              },
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Catatan pribadi:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _noteController,
+              maxLines: 5,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Tuliskan apa yang Anda rasakan...',
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: ElevatedButton(
+                onPressed: _saveJournalEntry,
+                child: const Text('Simpan Jurnal'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Profil Page
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -175,68 +280,11 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Pengguna'),
-        backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            // Foto Profil
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                'https://picsum.photos/id/237/200/300', // Ganti dengan URL gambar profil
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Nama Pengguna
-            const Text(
-              'Toni sukapisang',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Email Pengguna
-            const Text(
-              'email@selflove.com',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Pengaturan
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: const Text('Pengaturan'),
-              onTap: () {
-                // Arahkan ke halaman pengaturan
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Pengaturan'),
-                      content: const Text('Pengaturan akun dan aplikasi.'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
+      body: Center(
+        child: Text(
+          'Halaman Profil',
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
     );
